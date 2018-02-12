@@ -129,9 +129,14 @@ export function filterHelper(resolveParams: ExtendedResolveParams): void {
       const operatorFields = filter[OPERATORS_FIELDNAME];
       Object.keys(operatorFields).forEach(fieldName => {
         const fieldOperators = { ...operatorFields[fieldName] };
-        const criteria = {};
+        let criteria = {};
+        
         Object.keys(fieldOperators).forEach(operatorName => {
-          criteria[`$${operatorName}`] = fieldOperators[operatorName];
+          if (operatorName === 'like') {
+            criteria = new RegExp(fieldOperators[operatorName], 'i')
+          } else {
+            criteria[`$${operatorName}`] = fieldOperators[operatorName];
+          }
         });
         if (Object.keys(criteria).length > 0) {
           // eslint-disable-next-line
@@ -197,6 +202,7 @@ export function addFieldsWithOperator(
     'ne',
     'in[]',
     'nin[]',
+    'like',
   ];
 
   // if `opts.resolvers.[resolverName].filter.operators` is empty and not disabled via `false`
