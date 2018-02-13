@@ -115,11 +115,32 @@ export function filterHelper(resolveParams: ExtendedResolveParams): void {
     }
 
     const clearedFilter = {};
-    Object.keys(filterFields).forEach(key => {
-      if (modelFields[key]) {
-        clearedFilter[key] = filterFields[key];
+    const objToDotNotation = function(field) {
+      var res = {};
+      (function recurse(obj, current) {
+        for(var key in obj) {
+          var value = obj[key];
+          var newKey = (current ? current + "." + key : key);  // joined key with dot
+          if(value && typeof value === "object") {
+            recurse(value, newKey);  // it's a nested object, so do it again
+          } else {
+            res[newKey] = value;  // it's not an object, so set the property
+          }
+        }
+      })(field);
+      return res;
+    }
+    const filterFieldsWithDotNotation = objToDotNotation(filterFields)
+    Object.keys(filterFieldsWithDotNotation).forEach(function (key) {
+      if (modelFields.indexOf(key) !== -1) {
+        clearedFilter[key] = filterFieldsWithDotNotation[key];
       }
     });
+    // Object.keys(filterFields).forEach(key => {
+    //   if (modelFields[key]) {
+    //     clearedFilter[key] = filterFields[key];
+    //   }
+    // });
     if (Object.keys(clearedFilter).length > 0) {
       // eslint-disable-next-line
       resolveParams.query = resolveParams.query.where(toMongoDottedObject(clearedFilter));
