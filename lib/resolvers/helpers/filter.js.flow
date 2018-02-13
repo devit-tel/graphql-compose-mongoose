@@ -151,6 +151,11 @@ export function filterHelper(resolveParams: ExtendedResolveParams): void {
   }
 }
 
+export function getAllFieldNames(model: MongooseModel): string[] {
+  const fieldNames = Object.keys(model.schema.paths);
+  return fieldNames;
+}
+
 export function getIndexedFieldNames(model: MongooseModel): string[] {
   const indexes = getIndexesFromModel(model);
 
@@ -202,11 +207,15 @@ export function addFieldsWithOperator(
 
   // if `opts.resolvers.[resolverName].filter.operators` is empty and not disabled via `false`
   // then fill it up with indexed fields
-  const indexedFields = getIndexedFieldNames(model);
+  // const indexedFields = getIndexedFieldNames(model);
+  const allFields = getAllFieldNames(model);
   if (operatorsOpts !== false && Object.keys(operatorsOpts).length === 0) {
-    indexedFields.forEach(fieldName => {
+    allFields.forEach(fieldName => {
       operatorsOpts[fieldName] = availableOperators; // eslint-disable-line
     });
+    // indexedFields.forEach(fieldName => {
+    //   operatorsOpts[fieldName] = availableOperators; // eslint-disable-line
+    // });
   }
 
   const existedFields = inputComposer.getFields();
