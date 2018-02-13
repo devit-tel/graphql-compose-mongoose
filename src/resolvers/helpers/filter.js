@@ -18,7 +18,7 @@ import type { ExtendedResolveParams } from '../index';
 
 export const OPERATORS_FIELDNAME = '_operators';
 
-export type FilterOperatorNames = 'gt' | 'gte' | 'lt' | 'lte' | 'ne' | 'in[]' | 'nin[]' | 'regex';
+export type FilterOperatorNames = 'gt' | 'gte' | 'lt' | 'lte' | 'ne' | 'in[]' | 'nin[]' | 'regex' | 'options';
 
 export type FilterOperatorsOpts = {
   [fieldName: string]: FilterOperatorNames[] | false,
@@ -203,6 +203,7 @@ export function addFieldsWithOperator(
     'in[]',
     'nin[]',
     'regex',
+    'options',
   ];
 
   // if `opts.resolvers.[resolverName].filter.operators` is empty and not disabled via `false`
