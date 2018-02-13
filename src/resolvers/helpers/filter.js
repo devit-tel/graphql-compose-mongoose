@@ -106,7 +106,7 @@ export const filterHelperArgs = (
 export function filterHelper(resolveParams: ExtendedResolveParams): void {
   const filter = resolveParams.args && resolveParams.args.filter;
   if (filter && typeof filter === 'object' && Object.keys(filter).length > 0) {
-    const modelFields = resolveParams.query.schema.paths;
+    const modelFields = Object.keys(resolveParams.query.schema.paths);
 
     const { _ids, ...filterFields } = filter;
     if (_ids && Array.isArray(_ids)) {
