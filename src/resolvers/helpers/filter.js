@@ -153,7 +153,15 @@ export function filterHelper(resolveParams: ExtendedResolveParams): void {
 
 export function getAllFieldNames(model: MongooseModel): string[] {
   const fieldNames = Object.keys(model.schema.paths);
-  return fieldNames;
+  const result = [];
+  for (let i in fieldNames) {
+    let field = fieldNames[i].split(".")[0].replace(/[^_a-zA-Z0-9]/i, '__');
+    // var clearedName = keys[0]
+    if (result.indexOf(field) == -1) {
+      result.push(field);
+    }
+  }
+  return result;
 }
 
 export function getIndexedFieldNames(model: MongooseModel): string[] {
