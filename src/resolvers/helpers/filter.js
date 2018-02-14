@@ -10,6 +10,7 @@ import {
   GraphQLList,
   getNamedType,
 } from 'graphql-compose/lib/graphql';
+import GraphQLJSON from 'graphql-type-json';
 import { getIndexesFromModel } from '../../utils/getIndexesFromModel';
 import GraphQLMongoID from '../../types/mongoid';
 import { toMongoDottedObject, upperFirst } from '../../utils';
@@ -17,6 +18,7 @@ import typeStorage from '../../typeStorage';
 import type { ExtendedResolveParams } from '../index';
 
 export const OPERATORS_FIELDNAME = '_operators';
+export const RAW_QUERY_FIELDNAME = '_rawQuery';
 
 export type FilterOperatorNames = 'gt' | 'gte' | 'lt' | 'lte' | 'ne' | 'in[]' | 'nin[]' | 'regex' | 'options';
 
@@ -312,6 +314,10 @@ export function addFieldsWithOperator(
       }
     }
   });
+  inputComposer.setField(RAW_QUERY_FIELDNAME, {
+    type: GraphQLJSON,
+    description: 'Filter everything',
+  });
 
   if (Object.keys(operatorsComposer.getFields()).length > 0) {
     inputComposer.setField(OPERATORS_FIELDNAME, {
@@ -321,4 +327,35 @@ export function addFieldsWithOperator(
   }
 
   return operatorsComposer;
+}
+
+export function filterCustomHelper(resolveParams: ExtendedResolveParams): void {
+  const filter = resolveParams.args && resolveParams.args.filter;
+  if (filter && typeof filter === 'object' && Object.keys(filter).length > 0) {
+    if (filter[RAW_QUERY_FIELDNAME]) {
+      const objToDotNotation = function(field) {
+        var res = {};
+        (function recurse(obj, current) {
+          for(var key in obj) {
+            var value = obj[key];
+            var newKey = (current ? current + "." + key : key);  // joined key with dot
+            if(value && typeof value === "object") {
+              recurse(value, newKey);  // it's a nested object, so do it again
+            } else {
+              res[newKey] = value;  // it's not an object, so set the property
+            }
+          }
+        })(field);
+        return res;
+      }
+      const rawQuery = filter._rawQuery;
+      // const filterFieldsWithDotNotation = objToDotNotation(filterFields)
+      if (isObject(rawQuery)) {
+        // eslint-disable-next-line
+        resolveParams.query = resolveParams.query.where(
+          rawQuery
+        );
+      }
+    }
+  }
 }

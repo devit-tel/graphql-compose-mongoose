@@ -9,6 +9,7 @@ import {
   skipHelper,
   skipHelperArgs,
   filterHelper,
+  filterCustomHelper,
   filterHelperArgs,
   sortHelper,
   sortHelperArgs,
@@ -50,6 +51,7 @@ export default function findMany(
     },
     resolve: (resolveParams: ExtendedResolveParams) => {
       resolveParams.query = model.find();
+      filterCustomHelper(resolveParams);
       filterHelper(resolveParams);
       skipHelper(resolveParams);
       limitHelper(resolveParams);
