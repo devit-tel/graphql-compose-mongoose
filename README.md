@@ -11,6 +11,11 @@
 
 This is a plugin for [graphql-compose](https://github.com/nodkz/graphql-compose), which derives GraphQLType from your [mongoose model](https://github.com/Automattic/mongoose). Also derives bunch of internal GraphQL Types. Provide all CRUD resolvers, including `graphql connection`, also provided basic search via operators ($lt, $gt and so on).
 
+Differance
+============
+- Add more filter [regex], [options]
+- Change filter by Index only to filter all fields
+- Fix filter nested return wrong data
 Installation
 ============
 ```
@@ -341,7 +346,7 @@ export type filterHelperArgsOpts = {
 };
 
 // supported operators names in filter `arg`
-export type filterOperatorNames =  'gt' | 'gte' | 'lt' | 'lte' | 'ne' | 'in[]' | 'nin[]';
+export type filterOperatorNames =  'gt' | 'gte' | 'lt' | 'lte' | 'ne' | 'in[]' | 'nin[]' | 'regex' | 'options';
 export type filterOperatorsOpts = { [fieldName: string]: filterOperatorNames[] | false };
 
 export type sortHelperArgsOpts = {
