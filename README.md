@@ -16,6 +16,7 @@ Differance
 - Add more filter [regex], [options]
 - Change filter by Index only to filter all fields
 - Fix filter nested return wrong data
+
 Installation
 ============
 ```
