@@ -150,16 +150,36 @@ export function filterHelper(resolveParams: ExtendedResolveParams): void {
       const operatorFields = filter[OPERATORS_FIELDNAME];
       Object.keys(operatorFields).forEach(fieldName => {
         const fieldOperators = { ...operatorFields[fieldName] };
-        const criteria = {};
+        // const criteria = {};
+        const newFieldName = {};
         Object.keys(fieldOperators).forEach(operatorName => {
-          criteria[`$${operatorName}`] = fieldOperators[operatorName];
+          if (typeof fieldOperators[operatorName] === 'object') {
+            Object.keys(fieldOperators[operatorName]).forEach(key => {
+              newFieldName[`${fieldName}.${key}`] = {
+                [`$${operatorName}`]: fieldOperators[operatorName][key],
+              };
+            });
+          } else {
+            newFieldName[`${fieldName}`] = { [`$${operatorName}`]: fieldOperators[operatorName] };
+          }
         });
-        if (Object.keys(criteria).length > 0) {
+        if (Object.keys(newFieldName).length > 0) {
           // eslint-disable-next-line
-          resolveParams.query = resolveParams.query.where({
-            [fieldName]: criteria,
+          Object.keys(newFieldName).forEach(keyName => {
+            resolveParams.query = resolveParams.query.where({
+              [keyName]: newFieldName[keyName],
+            });
           });
         }
+        // Object.keys(fieldOperators).forEach(operatorName => {
+        //   criteria[`$${operatorName}`] = fieldOperators[operatorName];
+        // });
+        // if (Object.keys(criteria).length > 0) {
+        //   // eslint-disable-next-line
+        //   resolveParams.query = resolveParams.query.where({
+        //     [fieldName]: criteria,
+        //   });
+        // }
       });
     }
   }
