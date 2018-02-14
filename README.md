@@ -11,7 +11,7 @@
 
 This is a plugin for [graphql-compose](https://github.com/nodkz/graphql-compose), which derives GraphQLType from your [mongoose model](https://github.com/Automattic/mongoose). Also derives bunch of internal GraphQL Types. Provide all CRUD resolvers, including `graphql connection`, also provided basic search via operators ($lt, $gt and so on).
 
-Differance
+Differance original [graphql-compose-mongoose](https://github.com/graphql-compose/graphql-compose-mongoose)
 ============
 - Add more filter [regex], [options]
 - Change filter by Index only to filter all fields
