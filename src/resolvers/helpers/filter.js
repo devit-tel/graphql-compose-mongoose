@@ -121,7 +121,7 @@ export function filterHelper(resolveParams: ExtendedResolveParams): void {
         for(var key in obj) {
           var value = obj[key];
           var newKey = (current ? current + "." + key : key);  // joined key with dot
-          if(value && typeof value === "object") {
+          if(value && typeof value === "object" && !Array.isArray(value)) {
             recurse(value, newKey);  // it's a nested object, so do it again
           } else {
             res[newKey] = value;  // it's not an object, so set the property
@@ -153,7 +153,7 @@ export function filterHelper(resolveParams: ExtendedResolveParams): void {
         // const criteria = {};
         const newFieldName = {};
         Object.keys(fieldOperators).forEach(operatorName => {
-          if (typeof fieldOperators[operatorName] === 'object') {
+          if (typeof fieldOperators[operatorName] === 'object' && !Array.isArray(fieldOperators[operatorName])) {
             Object.keys(fieldOperators[operatorName]).forEach(key => {
               newFieldName[`${fieldName}.${key}`] = {
                 [`$${operatorName}`]: fieldOperators[operatorName][key],
