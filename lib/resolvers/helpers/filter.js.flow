@@ -159,6 +159,11 @@ export function filterHelper(resolveParams: ExtendedResolveParams): void {
                 [`$${operatorName}`]: fieldOperators[operatorName][key],
               };
             });
+          } else if (typeof newFieldName[`${fieldName}`] === 'object') {
+            newFieldName[`${fieldName}`] = {
+              [`$${operatorName}`]: fieldOperators[operatorName],
+              ...newFieldName[`${fieldName}`],
+            };
           } else {
             newFieldName[`${fieldName}`] = { [`$${operatorName}`]: fieldOperators[operatorName] };
           }
