@@ -5,6 +5,7 @@ import type { MongooseModel } from 'mongoose';
 import { GraphQLEnumType } from 'graphql-compose/lib/graphql';
 import type { ComposeFieldConfigArgumentMap } from 'graphql-compose';
 import { getIndexesFromModel, extendByReversedIndexes } from '../../utils/getIndexesFromModel';
+import { getAttributesFromModel, extendByReversedAttributes } from '../../utils/getAttributesFromModel';
 import typeStorage from '../../typeStorage';
 import type { ExtendedResolveParams } from '../index';
 
@@ -42,10 +43,10 @@ export function sortHelper(resolveParams: ExtendedResolveParams): void {
 }
 
 export function getSortTypeFromModel(typeName: string, model: MongooseModel): GraphQLEnumType {
-  const indexes = extendByReversedIndexes(getIndexesFromModel(model));
-
+  // const indexes = extendByReversedIndexes(getIndexesFromModel(model));
+  const attributes = extendByReversedAttributes(getAttributesFromModel(model));
   const sortEnumValues = {};
-  indexes.forEach(indexData => {
+  attributes.forEach(indexData => {
     const keys = Object.keys(indexData);
     let name = keys
       .join('__')
@@ -56,10 +57,12 @@ export function getSortTypeFromModel(typeName: string, model: MongooseModel): Gr
     } else if (indexData[keys[0]] === -1) {
       name = `${name}_DESC`;
     }
-    sortEnumValues[name] = {
-      name,
-      value: indexData,
-    };
+    if (name !== '__V_ASC' && name !== '__V_DESC') {
+      sortEnumValues[name] = {
+        name,
+        value: indexData,
+      };
+    }
   });
 
   return typeStorage.getOrSet(
