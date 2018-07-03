@@ -279,7 +279,7 @@ export function scalarToGraphQL(field: MongooseFieldT): GraphQLOutputType {
     case 'ObjectID':
       return GraphQLMongoID;
     default:
-      return GraphQLGeneric;
+      return GraphQLJSON;
   }
 }
 
